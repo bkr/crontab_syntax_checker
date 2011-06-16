@@ -1,11 +1,11 @@
 class CrontabLine
   @@entry_regex = /^([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+(.*)$/
   def initialize
-    @minute = "[]"
-    @hour = "[]"
-    @day = "[]"
-    @month = "[]"
-    @weekday = "[]"
+    @minute = []
+    @hour = []
+    @day = []
+    @month = []
+    @weekday = []
     @command = ""
   end
   attr_accessor :command
