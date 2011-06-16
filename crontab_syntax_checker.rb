@@ -1,39 +1,93 @@
-class Crontab
+class CrontabLine
+  @@entry_regex = /^([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+(.*)$/
   def initialize
-    @minute = "*"
-    @hour = "*"
-    @day = "*"
-    @month = "*"
-    @weekday = "*"
-    @user = ""
+    @minute = "[]"
+    @hour = "[]"
+    @day = "[]"
+    @month = "[]"
+    @weekday = "[]"
     @command = ""
   end
+  attr_accessor :command
+  def minute
+    param_getter(:@minute)
+  end
+  def minute=(value)
+    check_minute(value)
+    param_setter(:@minute, value)
+  end
+  def hour
+    param_getter(:@hour)
+  end
+  def hour=(value)
+    check_hour(value)
+    param_setter(:@hour, value)
+  end
+  def day
+    param_getter(:@day)
+  end
+  def day=(value)
+    check_day(value)
+    param_setter(:@day, value)
+  end
+  def month
+    param_getter(:@month)
+  end
+  def month=(value)
+    check_month(value)
+    param_setter(:@month, value)
+  end
+  def weekday
+    param_getter(:@weekday)
+  end
+  def weekday=(value)
+    check_weekday(value)
+    param_setter(:@weekday, value)
+  end
   def self.create_by_hash(crontab_hash)
-    crontab = Crontab.new
+    crontab = CrontabLine.new
     crontab_hash.each() do |key, value|
-        crontab.send(key, value)
+        crontab.public_send(key, value)
     end
     crontab
   end
-  def to_s
-    [@minute, @hour, @day, @month, @weekday, @user, @command].join(" ") + "\n"
-  end
-  def verify_entry()
-    check_format()
-    check_minute()
-    check_hour()
-  end
-  private
-  def check_format(entry)
-    [:minute,:hour,:day,:month,:weekday].each do |type|
-      next if entry[type].nil?
-      raise error_message(entry,"#{type} must be a string") if entry[type].class != String
-      raise error_message(entry,"#{type} cannot be blank") if entry[type] == ""
-      raise error_message(entry,"#{type} may only contain numbers, *, -, and /") if entry[type] !~ /^[0-9\*\-\/]+$/
+  def self.create_by_entry(entry)
+    md = @@entry_regex.match(entry) 
+    if md
+      crontab = CrontabLine.new
+      crontab.minute = md[1]
+      crontab.hour = md[2]
+      crontab.day = md[3]
+      crontab.month = md[4]
+      crontab.weekday = md[5]
+      crontab.command = md[7]
+      crontab
+    else
+      raise error_message(entry, "Entry did match expected pattern")
     end
   end
-  def check_minute(entry)
-    minute_entry = entry[:minute]
+  def to_s
+    [@minute, @hour, @day, @month, @weekday, @command].join(" ") + "\n"
+  end
+  private
+  def param_getter(param)
+    if instance_variable_get(param).empty?
+      "*"
+    else
+      instance_variable_get(param).join(",")
+    end
+  end
+  def param_setter(param, value)
+    if value.nil?
+      value = '*'
+    end
+    if value =~ /\*/
+      instance_variable_set(param, [])
+    else
+      instance_variable_set(param, value.split(",", -1))
+    end
+  end
+  def check_minute(minute_entry)
     return if minute_entry.nil?
     
     minutes = minute_entry.split(",",-1)
@@ -54,15 +108,15 @@ class Crontab
       end 
     end
   end
-  def check_hour()
+  def check_hour(hour_entry)
+  end
+  def check_day(day_entry)
+  end
+  def check_month(month_entry)
+  end
+  def check_weekday(weekday_entry)
   end
   def error_message(entry,message)
     "Error with Crontab Entry #{entry.inspect}\n#{message}\n"
   end
 end
-
-
-
-
-
-
