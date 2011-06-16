@@ -8,11 +8,11 @@ class CrontabLine
     @weekday = []
     @command = ""
   end
-  attr_accessor :command
   def minute
     param_getter(:@minute)
   end
   def minute=(value)
+    value = value.to_s unless value.instance_of?(String)
     check_minute(value)
     param_setter(:@minute, value)
   end
@@ -20,6 +20,7 @@ class CrontabLine
     param_getter(:@hour)
   end
   def hour=(value)
+    value = value.to_s unless value.instance_of?(String)
     check_hour(value)
     param_setter(:@hour, value)
   end
@@ -27,6 +28,7 @@ class CrontabLine
     param_getter(:@day)
   end
   def day=(value)
+    value = value.to_s unless value.instance_of?(String)
     check_day(value)
     param_setter(:@day, value)
   end
@@ -34,6 +36,7 @@ class CrontabLine
     param_getter(:@month)
   end
   def month=(value)
+    value = value.to_s unless value.instance_of?(String)
     check_month(value)
     param_setter(:@month, value)
   end
@@ -41,8 +44,15 @@ class CrontabLine
     param_getter(:@weekday)
   end
   def weekday=(value)
+    value = value.to_s unless value.instance_of?(String)
     check_weekday(value)
     param_setter(:@weekday, value)
+  end
+  attr_reader :command
+  def command=(value)
+    value = "" if value.nil?
+    value = value.to_s unless value.instance_of?(String)
+    @command = value
   end
   def self.create_by_hash(crontab_hash)
     crontab = CrontabLine.new
@@ -92,19 +102,19 @@ class CrontabLine
     
     minutes = minute_entry.split(",",-1)
     minutes.each do |minute|
-      raise error_message(entry, "minute cannot contain a trailing comma") if minute == ""
+      raise error_message(minute_entry, "minute cannot contain a trailing comma") if minute == ""
       
       minute_ranges = minute.split("-",-1)
-      raise error_message(entry,"minute cannot contain more than one '-'") if minute_ranges.size > 2
-      raise error_message(entry,"minute contains an invalid range") if minute_ranges.size == 2 && minute_ranges[0].to_i > minute_ranges[1].to_i
+      raise error_message(minute_entry,"minute cannot contain more than one '-'") if minute_ranges.size > 2
+      raise error_message(minute_entry,"minute contains an invalid range") if minute_ranges.size == 2 && minute_ranges[0].to_i > minute_ranges[1].to_i
       
       minute_ranges.each do |minute_range|
-        raise error_message(entry,"minute in a range can only contain numbers") if minute_ranges.size == 2 && minute_range !~ /^[0-9]+$/
+        raise error_message(minute_entry,"minute in a range can only contain numbers") if minute_ranges.size == 2 && minute_range !~ /^[0-9]+$/
         
         minute_divisors = minute_range.split("/",-1)
-        raise error_message(entry,"minute cannot contain more than one '/'") if minute_divisors.size > 2
-        raise error_message(entry, "divisor must be a number greater than 0") if minute_divisors.size == 2 && minute_divisors[1].to_i <= 0
-        raise error_message(entry,"minute must be either an *, 0-60, or 0-60") unless minute_divisors[0] =~ /^([\*]|[0-5][0-9]?)$/
+        raise error_message(minute_entry,"minute cannot contain more than one '/'") if minute_divisors.size > 2
+        raise error_message(minute_entry, "divisor must be a number greater than 0") if minute_divisors.size == 2 && minute_divisors[1].to_i <= 0
+        raise error_message(minute_entry,"minute must be either an *, 0-60, or 0-60") unless minute_divisors[0] =~ /^([\*]|[0-5][0-9]?)$/
       end 
     end
   end

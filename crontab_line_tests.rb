@@ -128,3 +128,89 @@ class TestCrontabLineSetters < Test::Unit::TestCase
     assert_equal @crontab.command, "", "The command value was incorrect"
   end
 end
+
+class TestCrontabLineAllowableRanges < Test::Unit::TestCase
+  def setup
+    @crontab = CrontabLine.new
+  end
+  def test_minute_range_lower
+    assert_raise(RuntimeError) { @crontab.minute = -1 }
+    assert_raise(RuntimeError) { @crontab.minute = -10 }
+    assert_raise(RuntimeError) { @crontab.minute = -100 }
+  end
+  def test_minute_range_inside
+    (0..59).to_enum.each do |i|
+      assert_nothing_raised(RuntimeError) { @crontab.minute = i }
+      assert_equal @crontab.minute, i.to_s, "Minute value didn't match"
+    end
+  end
+  def test_minute_range_higher
+    assert_raise(RuntimeError) {  @crontab.minute = 60 }
+    assert_raise(RuntimeError) {  @crontab.minute = 100 }
+    assert_raise(RuntimeError) {  @crontab.minute = 1000 }
+  end
+  def test_hour_range_lower
+    assert_raise(RuntimeError) { @crontab.hour = -1 }
+    assert_raise(RuntimeError) { @crontab.hour = -10 }
+    assert_raise(RuntimeError) { @crontab.hour = -100 }
+  end
+  def test_hour_range_inside
+    (0..23).to_enum.each do |i|
+      assert_nothing_raised(RuntimeError) { @crontab.hour = i }
+      assert_equal @crontab.hour, i.to_s, "Hour value didn't match"
+    end
+  end
+  def test_hour_range_higher
+    assert_raise(RuntimeError) { @crontab.hour = 24 }
+    assert_raise(RuntimeError) { @crontab.hour = 240 }
+    assert_raise(RuntimeError) { @crontab.hour = 2400 }
+  end
+  def test_day_range_lower
+    assert_raise(RuntimeError) { @crontab.day = 0 }
+    assert_raise(RuntimeError) { @crontab.day = -1 }
+    assert_raise(RuntimeError) { @crontab.day = -10 }
+  end
+  def test_day_range_inside
+    (1..31).to_enum.each do |i|
+      assert_nothing_raised(RuntimeError) { @crontab.day = i }
+      assert_equal @crontab.day, i.to_s, "Day value didn't match"
+    end
+  end
+  def test_day_range_higher
+    assert_raise(RuntimeError) { @crontab.day = 32 }
+    assert_raise(RuntimeError) { @crontab.day = 320 }
+    assert_raise(RuntimeError) { @crontab.day = 3200 }
+  end
+  def test_month_range_lower
+    assert_raise(RuntimeError) { @crontab.month = 0 }
+    assert_raise(RuntimeError) { @crontab.month = -1 }
+    assert_raise(RuntimeError) { @crontab.month = -10 }
+  end
+  def test_month_range_inside
+    (1..12).to_enum.each do |i|
+      assert_nothing_raised(RuntimeError) { @crontab.month = i }
+      assert_equal @crontab.month, i.to_s, "Month value didn't match"
+    end
+  end
+  def test_month_range_higher
+    assert_raise(RuntimeError) { @crontab.month = 13 }
+    assert_raise(RuntimeError) { @crontab.month = 100 }
+    assert_raise(RuntimeError) { @crontab.month = 1000 }
+  end
+  def test_weekday_range_lower
+    assert_raise(RuntimeError) { @crontab.weekday = -1 }
+    assert_raise(RuntimeError) { @crontab.weekday = -10 }
+    assert_raise(RuntimeError) { @crontab.weekday = -100 }
+  end
+  def test_weekday_range_inside
+    (0..7).to_enum.each do |i|
+      assert_nothing_raised(RuntimeError) { @crontab.weekday = i }
+      assert_equal @crontab.weekday, i.to_s, "Weekday value didn't match"
+    end
+  end
+  def test_weekday_range_higher
+    assert_raise(RuntimeError) { @crontab.weekday = 8 }
+    assert_raise(RuntimeError) { @crontab.weekday = 10 }
+    assert_raise(RuntimeError) { @crontab.weekday = 100 }
+  end
+end
