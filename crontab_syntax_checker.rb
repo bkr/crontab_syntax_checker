@@ -1,7 +1,13 @@
 require 'crontab_fields'
 
 class CrontabLine
-  @@entry_regex = /^([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+(.*)$/
+  @@ENTRY_REGEX = /^([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+(.*)$/
+  @@MINUTE_GROUP_NUM = 1
+  @@HOUR_GROUP_NUM = 2
+  @@DAY_GROUP_NUM = 3
+  @@MONTH_GROUP_NUM = 4
+  @@WEEKDAY_GROUP_NUM = 5
+  @@COMMAND_GROUP_NUM = 6
   def initialize
     @minute = [CrontabAsterisk.new]
     @hour = [CrontabAsterisk.new]
@@ -49,27 +55,27 @@ class CrontabLine
   def self.create_by_hash(crontab_hash)
     crontab = CrontabLine.new
     crontab_hash.each() do |key, value|
-        crontab.public_send(key, value)
+        crontab.send("#{key}=", value)
     end
     crontab
   end
   def self.create_by_entry(entry)
-    md = @@entry_regex.match(entry) 
+    md = @@ENTRY_REGEX.match(entry) 
     if md
       crontab = CrontabLine.new
-      crontab.minute = md[1]
-      crontab.hour = md[2]
-      crontab.day = md[3]
-      crontab.month = md[4]
-      crontab.weekday = md[5]
-      crontab.command = md[7]
+      crontab.minute = md[@@MINUTE_GROUP_NUM]
+      crontab.hour = md[@@HOUR_GROUP_NUM]
+      crontab.day = md[@@DAY_GROUP_NUM]
+      crontab.month = md[@@MONTH_GROUP_NUM]
+      crontab.weekday = md[@@WEEKDAY_GROUP_NUM]
+      crontab.command = md[@@COMMAND_GROUP_NUM]
       crontab
     else
       raise "Entry did match expected pattern"
     end
   end
   def to_s
-    [minute, hour, day, month, weekday, @command].join(" ") + "\n"
+    [minute, hour, day, month, weekday, @command].join(" ")
   end
   private
   @@FIELD_CLASS_BY_PARAM = {
@@ -83,6 +89,7 @@ class CrontabLine
     @@FIELD_CLASS_BY_PARAM[param]
   end
   def param_setter(param, value)
+    raise "Crontab fields may not contain white-space characters" if value =~ /\s/
     value = "*" if value.nil?
     value = value.to_s unless value.instance_of? String
     if value =~ /\*(,|$)/
@@ -94,7 +101,10 @@ class CrontabLine
   end
 end
 
-
 def verify_crontab_line(crontab_line)
-  CrontabLine.create_by_entry(crontab_line)
+  CrontabLine.create_by_entry(crontab_line).to_s
+end
+
+def verify_crontab_hash(crontab_hash)
+  CrontabLine.create_by_hash(crontab_hash).to_s
 end
