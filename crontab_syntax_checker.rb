@@ -8,6 +8,7 @@ class CrontabLine
   @@MONTH_GROUP_NUM = 4
   @@WEEKDAY_GROUP_NUM = 5
   @@COMMAND_GROUP_NUM = 6
+  @@SPACE_IN_LIST_REGEX = /\d+(-\d+(\/\d+)?)?,\s\d+/
   def initialize
     @minute = [CrontabAsterisk.new]
     @hour = [CrontabAsterisk.new]
@@ -60,6 +61,11 @@ class CrontabLine
     crontab
   end
   def self.create_by_entry(entry)
+    md = @@SPACE_IN_LIST_REGEX.match(entry)
+    if md
+      raise "I think you have spaces in your crontab fields, but I'm not very smart.  " +
+           "Use 'create_by_hash()' instead if you disagree with me."
+    end
     md = @@ENTRY_REGEX.match(entry) 
     if md
       crontab = CrontabLine.new
