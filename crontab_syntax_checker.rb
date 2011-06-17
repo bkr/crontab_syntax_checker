@@ -1,7 +1,7 @@
 require 'crontab_fields'
 
 class CrontabLine
-  @@entry_regex = /^([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+(.*)$/
+  @@entry_regex = /^([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+([-\/,0-9*]+)\s+(.*)$/
   def initialize
     @minute = [CrontabAsterisk.new]
     @hour = [CrontabAsterisk.new]
