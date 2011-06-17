@@ -236,8 +236,10 @@ class TestCrontabLineRanges < Test::Unit::TestCase
     assert_nothing_raised(RuntimeError) { @crontab.minute = set_to }
     assert_equal @crontab.minute, set_to
   end
-  def test_minute_out_of_range
+  def test_minute_out_of_range_high
     assert_raise(RuntimeError) { @crontab.minute = "0-100" }
+  end
+  def test_minute_out_of_range_low
     assert_raise(RuntimeError) { @crontab.minute = "-1-59" }
   end
   def test_minute_multiple_out_of_range
@@ -260,8 +262,10 @@ class TestCrontabLineRanges < Test::Unit::TestCase
     assert_nothing_raised(RuntimeError) { @crontab.hour = set_to }
     assert_equal @crontab.hour, set_to
   end
-  def test_hour_out_of_range
+  def test_hour_out_of_range_high
     assert_raise(RuntimeError) { @crontab.hour = "0-100" }
+  end
+  def test_hour_out_of_range_low
     assert_raise(RuntimeError) { @crontab.hour = "-1-23" }
   end
   def test_hour_multiple_out_of_range
@@ -284,8 +288,10 @@ class TestCrontabLineRanges < Test::Unit::TestCase
     assert_nothing_raised(RuntimeError) { @crontab.day = set_to }
     assert_equal @crontab.day, set_to
   end
-  def test_day_out_of_range
+  def test_day_out_of_range_high
     assert_raise(RuntimeError) { @crontab.day "0-100" }
+  end
+  def test_day_out_of_range_low
     assert_raise(RuntimeError) { @crontab.day "-1-31" }
   end
   def test_day_multiple_out_of_range
@@ -308,8 +314,10 @@ class TestCrontabLineRanges < Test::Unit::TestCase
     assert_nothing_raised(RuntimeError) { @crontab.month = set_to }
     assert_equal @crontab.month, set_to
   end
-  def test_month_out_of_range
+  def test_month_out_of_range_high
     assert_raise(RuntimeError) { @crontab.month "0-100" }
+  end
+  def test_month_out_of_range_low
     assert_raise(RuntimeError) { @crontab.month "-1-12" }
   end
   def test_month_multiple_out_of_range
@@ -332,8 +340,10 @@ class TestCrontabLineRanges < Test::Unit::TestCase
     assert_nothing_raised(RuntimeError) { @crontab.weekday = set_to }
     assert_equal @crontab.weekday, set_to
   end
-  def test_weekday_out_of_range
+  def test_weekday_out_of_range_high
     assert_raise(RuntimeError) { @crontab.weekday "0-100" }
+  end
+  def test_weekday_out_of_range_low
     assert_raise(RuntimeError) { @crontab.weekday "-1-7" }
   end
   def test_weekday_multiple_out_of_range

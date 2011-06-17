@@ -1,52 +1,75 @@
+require 'crontab_fields'
+
 class CrontabLine
   @@entry_regex = /^([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+(.*)$/
+  @@crontab_null_singleton = CrontabNullField.new
   def initialize
-    @minute = []
-    @hour = []
-    @day = []
-    @month = []
-    @weekday = []
+    @minute = [@@crontab_null_singleton]
+    @hour = [@@crontab_null_singleton]
+    @day = [@@crontab_null_singleton]
+    @month = [@@crontab_null_singleton]
+    @weekday = [@@crontab_null_singleton]
     @command = ""
   end
   def minute
-    param_getter(:@minute)
+    @minute.join(',')
   end
   def minute=(value)
-    value = value.to_s unless value.instance_of?(String)
-    check_minute(value)
-    param_setter(:@minute, value)
+    if value =~ /\*/
+      @minute = [@@crontab_null_singleton]
+    else
+      value = value.to_s unless value.instance_of? String
+      minute_strings = value.split(',')
+      @minute = minute_strings.map {|min_s| CrontabMinute.create_from_string(min_s)}
+    end
   end
   def hour
-    param_getter(:@hour)
+    @hour.join(',')
   end
   def hour=(value)
-    value = value.to_s unless value.instance_of?(String)
-    check_hour(value)
-    param_setter(:@hour, value)
+    if value =~ /\*/
+      @hour = [@@crontab_null_singleton]
+    else
+      value = value.to_s unless value.instance_of? String
+      hour_strings = value.split(',')
+      @hour = hour_strings.map {|hou_s| CrontabHour.create_from_string(hou_s)}
+    end
   end
   def day
-    param_getter(:@day)
+    @day.join(',')
   end
   def day=(value)
-    value = value.to_s unless value.instance_of?(String)
-    check_day(value)
-    param_setter(:@day, value)
+    if value =~ /\*/
+      @day = [@@crontab_null_singleton]
+    else
+      value = value.to_s unless value.instance_of? String
+      day_strings = value.split(',')
+      @day = day_strings.map {|day_s| CrontabDay.create_from_string(day_s)}
+    end
   end
   def month
-    param_getter(:@month)
+    @month.join(',')
   end
   def month=(value)
-    value = value.to_s unless value.instance_of?(String)
-    check_month(value)
-    param_setter(:@month, value)
+    if value =~ /\*/
+      @month = [@@crontab_null_singleton]
+    else
+      value = value.to_s unless value.instance_of? String
+      month_strings = value.split(',')
+      @month = month_strings.map {|mon_s| CrontabMonth.create_from_string(mon_s)}
+    end
   end
   def weekday
-    param_getter(:@weekday)
+    @weekday.join(',')
   end
   def weekday=(value)
-    value = value.to_s unless value.instance_of?(String)
-    check_weekday(value)
-    param_setter(:@weekday, value)
+    if value =~ /\*/
+      @weekday = [@@crontab_null_singleton]
+    else
+      value = value.to_s unless value.instance_of? String
+      weekday_strings = value.split(',')
+      @weekday = weekday_strings.map {|wkd_s| CrontabWeekday.create_from_string(wkd_s)}
+    end
   end
   attr_reader :command
   def command=(value)
@@ -77,75 +100,6 @@ class CrontabLine
     end
   end
   def to_s
-    [@minute, @hour, @day, @month, @weekday, @command].join(" ") + "\n"
-  end
-  private
-  def param_getter(param)
-    if instance_variable_get(param).empty?
-      "*"
-    else
-      instance_variable_get(param).join(",")
-    end
-  end
-  def param_setter(param, value)
-    if value.nil?
-      value = '*'
-    end
-    if value =~ /\*/
-      instance_variable_set(param, [])
-    else
-      instance_variable_set(param, value.split(",", -1))
-    end
-  end
-  def check_minute(minute_entry)
-    return if minute_entry.nil?
-    
-    minutes = minute_entry.split(",",-1)
-    minutes.each do |minute|
-      raise error_message(minute_entry, "minute cannot contain a trailing comma") if minute == ""
-      
-      minute_ranges = minute.split("-",-1)
-      raise error_message(minute_entry,"minute cannot contain more than one '-'") if minute_ranges.size > 2
-      raise error_message(minute_entry,"minute contains an invalid range") if minute_ranges.size == 2 && minute_ranges[0].to_i > minute_ranges[1].to_i
-      
-      minute_ranges.each do |minute_range|
-        raise error_message(minute_entry,"minute in a range can only contain numbers") if minute_ranges.size == 2 && minute_range !~ /^[0-9]+$/
-        
-        minute_divisors = minute_range.split("/",-1)
-        raise error_message(minute_entry,"minute cannot contain more than one '/'") if minute_divisors.size > 2
-        raise error_message(minute_entry, "divisor must be a number greater than 0") if minute_divisors.size == 2 && minute_divisors[1].to_i <= 0
-        raise error_message(minute_entry,"minute must be either an *, 0-60, or 0-60") unless minute_divisors[0] =~ /^([\*]|[0-5][0-9]?)$/
-      end 
-    end
-  end
-  def check_hour(hour_entry)
-  end
-  def check_day(day_entry)
-  end
-  def check_month(month_entry)
-  end
-  def check_weekday(weekday_entry)
-  end
-  def error_message(entry,message)
-    "Error with Crontab Entry #{entry.inspect}\n#{message}\n"
-  end
-end
-
-class CrontabMinute
-  @@min = 0
-  @@max = 59
-  def initialize(start, stop=nil, step=nil)
-    @start = start
-    stop.nil? ? @stop = start : @stop = stop
-    step.nil? ? @step = 1 : @step = step
-  end
-  def to_s
-    as_s = @start.to_s
-    as_s += "-#{@stop}" if @stop > @start
-    as_s += "/#{@step}" if @step > 1
-    as_s
-  end
-  def is_valid?
-    @start >= @@min and @stop <= @@max
+    [minute, hour, day, month, weekday, @command].join(" ") + "\n"
   end
 end
