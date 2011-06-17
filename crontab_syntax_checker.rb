@@ -2,74 +2,43 @@ require 'crontab_fields'
 
 class CrontabLine
   @@entry_regex = /^([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+([,0-9*]+)\s+(.*)$/
-  @@crontab_null_singleton = CrontabNullField.new
   def initialize
-    @minute = [@@crontab_null_singleton]
-    @hour = [@@crontab_null_singleton]
-    @day = [@@crontab_null_singleton]
-    @month = [@@crontab_null_singleton]
-    @weekday = [@@crontab_null_singleton]
+    @minute = [CrontabAsterisk.new]
+    @hour = [CrontabAsterisk.new]
+    @day = [CrontabAsterisk.new]
+    @month = [CrontabAsterisk.new]
+    @weekday = [CrontabAsterisk.new]
     @command = ""
   end
   def minute
     @minute.join(',')
   end
   def minute=(value)
-    if value =~ /\*/
-      @minute = [@@crontab_null_singleton]
-    else
-      value = value.to_s unless value.instance_of? String
-      minute_strings = value.split(',')
-      @minute = minute_strings.map {|min_s| CrontabMinute.create_from_string(min_s)}
-    end
+    param_setter(:@minute, value)
   end
   def hour
     @hour.join(',')
   end
   def hour=(value)
-    if value =~ /\*/
-      @hour = [@@crontab_null_singleton]
-    else
-      value = value.to_s unless value.instance_of? String
-      hour_strings = value.split(',')
-      @hour = hour_strings.map {|hou_s| CrontabHour.create_from_string(hou_s)}
-    end
+    param_setter(:@hour, value)
   end
   def day
     @day.join(',')
   end
   def day=(value)
-    if value =~ /\*/
-      @day = [@@crontab_null_singleton]
-    else
-      value = value.to_s unless value.instance_of? String
-      day_strings = value.split(',')
-      @day = day_strings.map {|day_s| CrontabDay.create_from_string(day_s)}
-    end
+    param_setter(:@day, value)
   end
   def month
     @month.join(',')
   end
   def month=(value)
-    if value =~ /\*/
-      @month = [@@crontab_null_singleton]
-    else
-      value = value.to_s unless value.instance_of? String
-      month_strings = value.split(',')
-      @month = month_strings.map {|mon_s| CrontabMonth.create_from_string(mon_s)}
-    end
+    param_setter(:@month, value)
   end
   def weekday
     @weekday.join(',')
   end
   def weekday=(value)
-    if value =~ /\*/
-      @weekday = [@@crontab_null_singleton]
-    else
-      value = value.to_s unless value.instance_of? String
-      weekday_strings = value.split(',')
-      @weekday = weekday_strings.map {|wkd_s| CrontabWeekday.create_from_string(wkd_s)}
-    end
+    param_setter(:@weekday, value)
   end
   attr_reader :command
   def command=(value)
@@ -101,5 +70,26 @@ class CrontabLine
   end
   def to_s
     [minute, hour, day, month, weekday, @command].join(" ") + "\n"
+  end
+  private
+  @@FIELD_CLASS_BY_PARAM = {
+    :@minute => CrontabMinute,
+    :@hour => CrontabHour,
+    :@day => CrontabDay,
+    :@month => CrontabMonth,
+    :@weekday => CrontabWeekday
+  }
+  def get_field_class(param)
+    @@FIELD_CLASS_BY_PARAM[param]
+  end
+  def param_setter(param, value)
+    value = "*" if value.nil?
+    value = value.to_s unless value.instance_of? String
+    if value =~ /\*(,|$)/
+      instance_variable_set(param, [CrontabAsterisk.new])
+    else
+      minute_strings = value.split(',')
+      instance_variable_set(param, minute_strings.map {|min_s| (get_field_class(param)).create_from_string(min_s)})
+    end
   end
 end
