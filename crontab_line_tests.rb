@@ -346,98 +346,98 @@ class TestCrontabLineStepping < Test::Unit::TestCase
     @crontab = CrontabLine.new
   end
   def test_minute_asterix_with_stepping
-    set_to = '*\\2'
+    set_to = '*/2'
     assert_nothing_raised(RuntimeError) { @crontab.minute = set_to }
     assert_equal @crontab.minute, set_to
   end
   def test_minute_range_with_stepping
-    set_to = '0-30\\5'
+    set_to = '0-30/5'
     assert_nothing_raised(RuntimeError) { @crontab.minute = set_to }
     assert_equal @crontab.minute, set_to
   end
   def test_minute_stepping_with_multiple_ranges
-    set_to = '0-10\\2,12,13-15,18-21\\3'
+    set_to = '0-10/2,12,13-15,18-21/3'
     assert_nothing_raised(RuntimeError) { @crontab.minute = set_to }
     assert_equal @crontab.minute, set_to
   end
   def test_minute_stepping_with_no_range_raises
-    set_to = '10\\5'
+    set_to = '10/5'
     assert_raise(RuntimeError) { @crontab.minute = set_to }
   end
   def test_hour_asterix_with_stepping
-    set_to = '*\\2'
+    set_to = '*/2'
     assert_nothing_raised(RuntimeError) { @crontab.hour = set_to }
     assert_equal @crontab.hour, set_to
   end
   def test_hour_range_with_stepping
-    set_to = '0-22\\2'
+    set_to = '0-22/2'
     assert_nothing_raised(RuntimeError) { @crontab.hour = set_to }
     assert_equal @crontab.hour, set_to
   end
   def test_hour_stepping_with_multiple_ranges
-    set_to = '0-10\\2,16-22\\2'
+    set_to = '0-10/2,16-22/2'
     assert_nothing_raised(RuntimeError) { @crontab.hour = set_to }
     assert_equal @crontab.hour, set_to
   end
   def test_hour_stepping_with_no_range_raises
-    set_to = '10\\5'
+    set_to = '10/5'
     assert_raise(RuntimeError) { @crontab.hour = set_to }
   end
   def test_day_asterix_with_stepping
-    set_to = '*\\2'
+    set_to = '*/2'
     assert_nothing_raised(RuntimeError) { @crontab.day = set_to }
     assert_equal @crontab.day, set_to
   end
   def test_day_range_with_stepping
-    set_to = '1-30\\5'
+    set_to = '1-30/5'
     assert_nothing_raised(RuntimeError) { @crontab.day = set_to }
     assert_equal @crontab.day, set_to
   end
   def test_day_stepping_with_multiple_ranges
-    set_to = '1-11\\2,15,20-30\\2'
+    set_to = '1-11/2,15,20-30/2'
     assert_nothing_raised(RuntimeError) { @crontab.day = set_to }
     assert_equal @crontab.day, set_to
   end
   def test_day_stepping_with_no_range_raises
-    set_to = '10\\5'
+    set_to = '10/5'
     assert_raise(RuntimeError) { @crontab.day = set_to }
   end
   def test_month_asterix_with_stepping
-    set_to = '*\\2'
+    set_to = '*/2'
     assert_nothing_raised(RuntimeError) { @crontab.month = set_to }
     assert_equal @crontab.month, set_to
   end
   def test_month_range_with_stepping
-    set_to = '2-12\\2'
+    set_to = '2-12/2'
     assert_nothing_raised(RuntimeError) { @crontab.month = set_to }
     assert_equal @crontab.month, set_to
   end
   def test_month_stepping_with_multiple_ranges
-    set_to = '1-3\\1,5,7-11\\2'
+    set_to = '1-3/1,5,7-11/2'
     assert_nothing_raised(RuntimeError) { @crontab.month = set_to }
     assert_equal @crontab.month, set_to
   end
   def test_month_stepping_with_no_range_raises
-    set_to = '10\\5'
+    set_to = '10/5'
     assert_raise(RuntimeError) { @crontab.month = set_to }
   end
   def test_weekday_asterix_with_stepping
-    set_to = '*\\2'
+    set_to = '*/2'
     assert_nothing_raised(RuntimeError) { @crontab.weekday = set_to }
     assert_equal @crontab.weekday, set_to
   end
   def test_weekday_range_with_stepping
-    set_to = '0-4\\2'
+    set_to = '0-4/2'
     assert_nothing_raised(RuntimeError) { @crontab.weekday = set_to }
     assert_equal @crontab.weekday, set_to
   end
   def test_weekday_stepping_with_multiple_ranges
-    set_to = '0-3\\3,4-6\\2'
+    set_to = '0-3/3,4-6/2'
     assert_nothing_raised(RuntimeError) { @crontab.weekday = set_to }
     assert_equal @crontab.weekday, set_to
   end
   def test_weekday_stepping_with_no_range_raises
-    set_to = '3\\5'
+    set_to = '3/5'
     assert_raise(RuntimeError) { @crontab.weekday = set_to }
   end
 end
