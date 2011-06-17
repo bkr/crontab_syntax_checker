@@ -130,3 +130,22 @@ class CrontabLine
     "Error with Crontab Entry #{entry.inspect}\n#{message}\n"
   end
 end
+
+class CrontabMinute
+  @@min = 0
+  @@max = 59
+  def initialize(start, stop=nil, step=nil)
+    @start = start
+    stop.nil? ? @stop = start : @stop = stop
+    step.nil? ? @step = 1 : @step = step
+  end
+  def to_s
+    as_s = @start.to_s
+    as_s += "-#{@stop}" if @stop > @start
+    as_s += "/#{@step}" if @step > 1
+    as_s
+  end
+  def is_valid?
+    @start >= @@min and @stop <= @@max
+  end
+end
