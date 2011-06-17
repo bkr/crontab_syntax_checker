@@ -65,7 +65,7 @@ class CrontabLine
       crontab.command = md[7]
       crontab
     else
-      raise error_message(entry, "Entry did match expected pattern")
+      raise "Entry did match expected pattern"
     end
   end
   def to_s
@@ -92,4 +92,9 @@ class CrontabLine
       instance_variable_set(param, minute_strings.map {|min_s| (get_field_class(param)).create_from_string(min_s)})
     end
   end
+end
+
+
+def verify_crontab_line(crontab_line)
+  CrontabLine.create_by_entry(crontab_line)
 end
