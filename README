@@ -31,6 +31,6 @@ crontab.weekday = "*"
 crontab.command = "foo"
 crontab.to_s
 
-Note that the verify functions or CrontabLine::to_s may not return exactly the same string as your input though it should be functionally equivalent.  Extra white space in the command field will be truncated.  Also, if a list in a field contains an asterisk, with no stepping indicated, then the entire field will be converted to an asterisk.
+Note that the verify functions or CrontabLine::to_s may not return exactly the same string as your input.  The output, though possibly different, should be functionally equivalent.  Extra white space in the command field will be truncated.  Also, if a list in a field contains an asterisk, with no stepping indicated, then the entire field will be converted to an asterisk.  Feel free to use you input in crontab after it has been validated.
 
-This code follows the  man 5 crontab description of crontab files for validating entries.  Supported fields are asterisks, numbers, ranges, lists, and stepping (for ranges and asterisks).  Numbers must be within the valid range as per the main file.  Not supported are macro/named times.  See the man file for details on how crontab entries are formatted.
+This code follows the  man 5 crontab description of crontab files for validating entries.  Supported fields are asterisks, numbers, ranges, lists, and stepping (for ranges and asterisks).  Numbers must be within the valid range as per the man file.  Not supported are macro/named times.  See the man file for details on how crontab entries are formatted.
