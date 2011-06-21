@@ -1,3 +1,4 @@
+$:.unshift(File.join("..","lib",File.dirname(__FILE__)))
 require 'test/unit'
 require 'crontab_syntax_checker'
 
