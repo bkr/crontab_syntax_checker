@@ -452,3 +452,27 @@ class TestCrontabLineStepping < Test::Unit::TestCase
     assert_raise(RuntimeError) { @crontab.weekday = set_to }
   end
 end
+
+class TestVerifyCrontabLine < Test::Unit::TestCase
+  def testValidCrontabLine
+    assert_nothing_raised(RuntimeError) { verify_crontab_line("5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log") }
+  end
+  def testInvalidCrontabLine
+    assert_raise(RuntimeError) { verify_crontab_line("5, 35 */2 10-20,25-30 13 1-5 /foo/var | spam - > eggs.log") }
+  end
+end
+
+class TestVerifyCrontabHash < Test::Unit::TestCase
+  def testValidCrontabHash
+    crontab_hash = { :minute=>"5,35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"*", :weekday=>"1-5", :command=>"/foo/var | spam - > eggs.log" }
+    assert_nothing_raised(RuntimeError) do
+      verify_crontab_hash(crontab_hash)
+    end
+  end
+  def testInvalidCrontabHash
+    crontab_hash = { :minute=>"5, 35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"13", :weekday=>"1-5", :command=>"/foo/var | spam - > eggs.log" }
+    assert_raise(RuntimeError) do
+      verify_crontab_hash(crontab_hash)
+    end
+  end
+end
