@@ -454,25 +454,60 @@ class TestCrontabLineStepping < Test::Unit::TestCase
 end
 
 class TestVerifyCrontabLine < Test::Unit::TestCase
-  def testValidCrontabLine
+  def test_valid_crontab_line
     assert_nothing_raised(RuntimeError) { verify_crontab_line("5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log") }
   end
-  def testInvalidCrontabLine
+  def test_invalid_crontab_line
     assert_raise(RuntimeError) { verify_crontab_line("5, 35 */2 10-20,25-30 13 1-5 /foo/var | spam - > eggs.log") }
   end
 end
 
 class TestVerifyCrontabHash < Test::Unit::TestCase
-  def testValidCrontabHash
+  def test_valid_crontab_hash
     crontab_hash = { :minute=>"5,35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"*", :weekday=>"1-5", :command=>"/foo/var | spam - > eggs.log" }
     assert_nothing_raised(RuntimeError) do
       verify_crontab_hash(crontab_hash)
     end
   end
-  def testInvalidCrontabHash
+  def test_invalid_crontab_hash
     crontab_hash = { :minute=>"5, 35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"13", :weekday=>"1-5", :command=>"/foo/var | spam - > eggs.log" }
     assert_raise(RuntimeError) do
       verify_crontab_hash(crontab_hash)
     end
+  end
+  def test_valid_crontab_hash_with_user
+    crontab_hash = { :minute=>"5,35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"*", :weekday=>"1-5", :user=>"root", :command=>"/foo/var | spam - > eggs.log" }
+    assert_nothing_raised(RuntimeError) do
+      result = verify_crontab_hash(crontab_hash)
+    end
+  end
+end
+
+class TestCrontabstringOutput < Test::Unit::TestCase
+  def setup
+    @crontab = CrontabLine.new
+    @crontab.minute = "*"
+    @crontab.hour = "*"
+    @crontab.day = "*"
+    @crontab.month = "*"
+    @crontab.weekday = "*"
+    @crontab.command = "/foo/var | spam - > eggs.log"
+  end
+  def test_to_string_output
+    assert_equal "* * * * * /foo/var | spam - > eggs.log", @crontab.to_s, "Converting crontab to string failed"
+  end
+  def test_to_string_output_with_user
+    @crontab.user = "root"
+    assert_equal "* * * * * root /foo/var | spam - > eggs.log", @crontab.to_s, "Converting crontab to string (with user) failed"
+  end
+end
+
+class TestCrontabstringOutputFromHash < Test::Unit::TestCase
+  def setup
+    @crontab_hash = { :minute=>"5,35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"*", :weekday=>"1-5", :user=>"root", :command=>"/foo/var | spam - > eggs.log" }
+    @expected_string = "5,35 */2 10-20,25-30 * 1-5 root /foo/var | spam - > eggs.log"
+  end
+  def test_to_string_output_with_user_from_hash
+    assert @expected_string, verify_crontab_hash(@crontab_hash)
   end
 end

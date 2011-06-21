@@ -16,7 +16,9 @@ class CrontabLine
     @month = [CrontabAsterisk.new]
     @weekday = [CrontabAsterisk.new]
     @command = ""
+    @user = nil
   end
+  attr_accessor :user
   def minute
     @minute.join(',')
   end
@@ -81,7 +83,9 @@ class CrontabLine
     end
   end
   def to_s
-    [minute, hour, day, month, weekday, @command].join(" ")
+    fields = [minute, hour, day, month, weekday, command]
+    fields.insert(-2, user) unless user.nil?
+    fields.join(" ")
   end
   private
   @@FIELD_CLASS_BY_PARAM = {
