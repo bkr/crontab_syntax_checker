@@ -112,9 +112,17 @@ class CrontabLine
 end
 
 def verify_crontab_line(crontab_line)
-  CrontabLine.create_by_entry(crontab_line).to_s
+  begin
+    CrontabLine.create_by_entry(crontab_line).to_s
+  rescue RuntimeError => e
+    raise "Invalid entry \"#{crontab_line}\": #{e.message}"
+  end
 end
 
 def verify_crontab_hash(crontab_hash)
-  CrontabLine.create_by_hash(crontab_hash).to_s
+  begin
+    CrontabLine.create_by_hash(crontab_hash).to_s
+  rescue RuntimeError => e
+    raise "Invalid entry \"#{crontab_hash.inspect}\": #{e.message}"
+  end
 end
