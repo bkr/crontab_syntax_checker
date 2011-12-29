@@ -13,8 +13,8 @@ You may input your candidate crontab entry as a string to the verify_crontab_lin
 ```ruby
 > require 'crontab_syntax_checker'
 => true 
-> verify_crontab_line("* * * * * foo")
-=> "* * * * * foo"
+> verify_crontab_line("5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log")
+=> "5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log"
 ```
 
 A string representation is returned upon success.  A RuntimeError is raised when the format is invalid.
@@ -26,8 +26,8 @@ Another way to validate entries is by breaking up the crontab fields into a hash
 ```ruby
 > require 'crontab_syntax_checker'
 => true 
-> verify_crontab_hash(:minute=>"*", :hour=>"*", :day=>"*", :month=>"*",  :weekday=>"*", :command=>"foo")
-=> "* * * * * foo"
+> verify_crontab_hash(:minute=>"5,35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"*", :weekday=>"1-5", :command=>"/foo/var | spam - > eggs.log")
+=> "5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log"
 ```
 
 A string representation is returned upon success.  A RuntimeError is raised when the format is invalid.
@@ -40,28 +40,28 @@ You may a CrontabLine object directly and use setter methods for each field, whi
 > require 'crontab_syntax_checker'
 => true
 > crontab = CrontabLine.new
-=> #<CrontabLine:0x1005b11d8
+=> #<CrontabLine:0x1005bf4b8
  @command="",
- @day=[#<CrontabAsterisk:0x1005b1070 @step=1>],
- @hour=[#<CrontabAsterisk:0x1005b1110 @step=1>],
- @minute=[#<CrontabAsterisk:0x1005b1160 @step=1>],
- @month=[#<CrontabAsterisk:0x1005b1020 @step=1>],
+ @day=[#<CrontabAsterisk:0x1005bf328 @step=1>],
+ @hour=[#<CrontabAsterisk:0x1005bf3a0 @step=1>],
+ @minute=[#<CrontabAsterisk:0x1005bf3f0 @step=1>],
+ @month=[#<CrontabAsterisk:0x1005bf2d8 @step=1>],
  @user=nil,
- @weekday=[#<CrontabAsterisk:0x1005b0fd0 @step=1>]>
-> crontab.minute = "*"
-=> "*"
-> crontab.hour = "*"
-=> "*"
-> crontab.day = "*"
-=> "*"
+ @weekday=[#<CrontabAsterisk:0x1005bf288 @step=1>]>
+> crontab.minute = "5,35"
+=> "5,35"
+> crontab.hour = "*/2"
+=> "*/2"
+> crontab.day = "10-20,25-30"
+=> "10-20,25-30"
 > crontab.month = "*"
 => "*"
-> crontab.weekday = "*"
-=> "*"
-> crontab.command = "foo"
-=> "foo"
+> crontab.weekday = "1-5"
+=> "1-5"
+> crontab.command = "/foo/var | spam - > eggs.log"
+=> "/foo/var | spam - > eggs.log"
 > crontab.to_s
-=> "* * * * * foo"
+=> "5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log"
 ```
 
 When no RuntimeError is raised, it can be assumed that the crontab field is valid.
