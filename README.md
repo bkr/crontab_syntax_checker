@@ -40,7 +40,7 @@ A string representation is returned upon success.  A RuntimeError is raised when
 
 ### Example 3 - Using an object
 
-You may a CrontabLine object directly and use setter methods for each field, which will be validated as they are set.  For example:
+You may create a CrontabLine object directly and use setter methods for each field, which will be validated as they are set.  For example:
 
 ```ruby
 > require 'crontab_syntax_checker'
