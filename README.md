@@ -4,7 +4,7 @@ This Ruby code was written to validate an entry that will be used in crontab.
 
 ## Quick start examples
 
-Crontab syntax checker is simple to use, which these examples demonstrate.  There are three ways to quickly check that an entry is formatted correctly.
+The crontab syntax checker is simple to use. These examples demonstrate three ways to quickly check that an entry is formatted correctly.
 
 ### Example 1 - Verify from a string
 
@@ -30,20 +30,48 @@ Another way to validate entries is by breaking up the crontab fields into a hash
 => "* * * * * foo"
 ```
 
-The verify_crontab_hash() function should be easy to use by other scripts.  
+A string representation is returned upon success.  A RuntimeError is raised when the format is invalid.
 
-Additionally, you may use the CrontabLine class directly and use setter methods for each field, which will be validated as they are set.  When no RuntimeError is raised, it can be assumed that the crontab field is valid.  For example:
+### Example 3 - Using an object
 
-crontab = CrontabLine.new
-crontab.minute = "*"
-crontab.hour = "*"
-crontab.day = "*"
-crontab.month = "*"
-crontab.weekday = "*"
-crontab.command = "foo"
-crontab.to_s
+You may a CrontabLine object directly and use setter methods for each field, which will be validated as they are set.  For example:
 
-Note that the verify functions or CrontabLine::to_s may not return exactly the same string as your input.  The output, though possibly different, should be functionally equivalent.  Extra white space in the command field will be truncated.  Also, if a list in a field contains an asterisk, with no stepping indicated, then the entire field will be converted to an asterisk.  Feel free to use your input in crontab after it has been validated.
+```ruby
+> require 'crontab_syntax_checker'
+=> true
+> crontab = CrontabLine.new
+=> #<CrontabLine:0x1005b11d8
+ @command="",
+ @day=[#<CrontabAsterisk:0x1005b1070 @step=1>],
+ @hour=[#<CrontabAsterisk:0x1005b1110 @step=1>],
+ @minute=[#<CrontabAsterisk:0x1005b1160 @step=1>],
+ @month=[#<CrontabAsterisk:0x1005b1020 @step=1>],
+ @user=nil,
+ @weekday=[#<CrontabAsterisk:0x1005b0fd0 @step=1>]>
+> crontab.minute = "*"
+=> "*"
+> crontab.hour = "*"
+=> "*"
+> crontab.day = "*"
+=> "*"
+> crontab.month = "*"
+=> "*"
+> crontab.weekday = "*"
+=> "*"
+> crontab.command = "foo"
+=> "foo"
+> crontab.to_s
+=> "* * * * * foo"
+```
+
+When no RuntimeError is raised, it can be assumed that the crontab field is valid.
+
+# Notes
+
+Keep in mind that the verify functions or CrontabLine#to_s may not return exactly the same string as your input.  The output, though possibly not equal, should be equivalent crontab syntax.
+* If a crontab list in a field contains an asterisk, with no stepping indicated, then the entire field will be converted to an asterisk.
+* Extra white space in the command field will be truncated.
+Feel free to use your own input in crontab after it has been validated.
 
 This code follows the  man 5 crontab description of crontab files for validating entries.  Supported fields are asterisks, numbers, ranges, lists, and stepping (for ranges and asterisks).  Numbers must be within the valid range as per the man file.  Not supported are macro/named times.  See the man file for details on how crontab entries are formatted.
 
