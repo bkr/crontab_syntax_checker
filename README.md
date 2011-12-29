@@ -26,7 +26,13 @@ Another way to validate entries is by breaking up the crontab fields into a hash
 ```ruby
 > require 'crontab_syntax_checker'
 => true 
-> verify_crontab_hash(:minute=>"5,35", :hour=>"*/2", :day=>"10-20,25-30", :month=>"*", :weekday=>"1-5", :command=>"/foo/var | spam - > eggs.log")
+> verify_crontab_hash(
+    :minute=>"5,35",
+    :hour=>"*/2",
+    :day=>"10-20,25-30",
+    :month=>"*",
+    :weekday=>"1-5",
+    :command=>"/foo/var | spam - > eggs.log")
 => "5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log"
 ```
 
