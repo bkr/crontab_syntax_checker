@@ -40,7 +40,7 @@ A string representation is returned upon success.  A RuntimeError is raised when
 
 ### Example 3 - Using an object
 
-You may create a CrontabLine object directly and use setter methods for each field, which will be validated as they are set.  For example:
+Finally you can create a CrontabLine object directly and use setter methods for each field, which will be validated as they are set.  For example:
 
 ```ruby
 > require 'crontab_syntax_checker'
@@ -70,16 +70,13 @@ You may create a CrontabLine object directly and use setter methods for each fie
 => "5,35 */2 10-20,25-30 * 1-5 /foo/var | spam - > eggs.log"
 ```
 
-When no RuntimeError is raised, it can be assumed that the crontab field is valid.
+When no RuntimeError is raised, the crontab field is valid.
 
 # Notes
 
-Keep in mind that the verify functions or CrontabLine#to_s may not return exactly the same string as your input.  The output, though possibly not equal, should be equivalent crontab syntax.
-* If a crontab list in a field contains an asterisk, with no stepping indicated, then the entire field will be converted to an asterisk.
-* Extra white space in the command field will be truncated.
-Feel free to use your own input in crontab after it has been validated.
+Keep in mind that the verify functions or CrontabLine#to_s may not return exactly the same string as your input.  The output, though possibly not equal, should be equivalent crontab syntax.  If a crontab list in a field contains an asterisk, with no stepping indicated, then the entire field will be converted to an asterisk.  Extra white space in the command field will be truncated.  If this is a concern, use your own input in crontab after it has been validated.
 
-This code follows the  man 5 crontab description of crontab files for validating entries.  Supported fields are asterisks, numbers, ranges, lists, and stepping (for ranges and asterisks).  Numbers must be within the valid range as per the man file.  Not supported are macro/named times.  See the man file for details on how crontab entries are formatted.
+The crontab validation here is based on the man 5 crontab file syntax description.  Supported fields are asterisks, numbers, ranges, lists, and stepping (for ranges and asterisks).  Numbers must be within the valid range as per the man file.  Not supported are macro/named times.  See the man file for more info.
 
 # Credits
 
