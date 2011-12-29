@@ -1,6 +1,6 @@
 # Crontab Syntax Checker - Validate crontab entries
 
-This Ruby code was written to validate an entry that will be used in [crontab](http://www.manpagez.com/man/5/crontab/ "man 5 crontab").
+Ruby gem to validate an entry that will be used in [crontab](http://www.manpagez.com/man/5/crontab/ "man 5 crontab").
 
 ## Quick start examples
 
