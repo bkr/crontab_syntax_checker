@@ -80,4 +80,4 @@ Crontab Syntax Checker is maintained by [Stephen Sloan](https://github.com/Steve
 
 # Copyright
 
-Copyright (c) 2011 Stephen Slaon, Bookrenter.com. See LICENSE.txt for further details.
+Copyright (c) 2011 Stephen Sloan, Bookrenter.com. See LICENSE.txt for further details.
