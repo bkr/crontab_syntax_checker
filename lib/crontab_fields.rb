@@ -7,8 +7,8 @@ class AbstractCrontabField
   @@ASTERISK_FIELD_REGEX = /^\*(\/(\d+))?$/
   def initialize(start, stop=nil, step=nil)
     @start = start.to_i
-    stop.nil? ? @stop = @start : @stop = stop.to_i
-    step.nil? ? @step = 1 : @step = step.to_i
+    @stop = stop.nil? ? @start : stop.to_i
+    @step = step.nil? ? 1 : step.to_i
     if @step > 1 and @stop == @start
       raise "Stepping must be used with ranges or asterisk only"
     end
