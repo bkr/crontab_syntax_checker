@@ -4,18 +4,20 @@ This code was written to validate an entry that will be used in crontab.  There 
 
 You may input your candidate crontab entry as a string to the verify_crontab_line() function:
 
- > require 'crontab_syntax_checker'
- => true 
- > verify_crontab_line("* * * * * foo")
- => "* * * * * foo" 
+```ruby
+require 'crontab_syntax_checker'
+verify_crontab_line("* * * * * foo")
+# => "* * * * * foo"
+```
 
 A string representation is returned upon success.  A RuntimeError is raised when the format is invalid.
 
 Another way to validate entries is by breaking up the crontab fields into a hash:
 
 ```ruby
-require 'crontab_syntax_checker' # true
-verify_crontab_hash(:minute=>"*", :hour=>"*", :day=>"*", :month=>"*",  :weekday=>"*", :command=>"foo") # "* * * * * foo"
+require 'crontab_syntax_checker'
+verify_crontab_hash(:minute=>"*", :hour=>"*", :day=>"*", :month=>"*",  :weekday=>"*", :command=>"foo")
+# => "* * * * * foo"
  ```
 
 The verify_crontab_hash() function should be easy to use by other scripts.  
