@@ -4,4 +4,5 @@ spec = Gem::Specification.new do |s|
   s.summary = 'Validate an entry that will be used in crontab'
   s.require_paths = ["lib"]
   s.files = Dir.glob("**/*")
+  s.authors     = ['Stephen Sloan']
 end
