@@ -53,7 +53,7 @@ class CrontabLine < CrontabLineBase
       crontab.command = md[@@COMMAND_GROUP_NUM]
       crontab
     else
-      raise "Entry did match expected pattern"
+      raise "Entry did not match expected pattern"
     end
   end
   def to_s
