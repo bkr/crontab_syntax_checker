@@ -1,5 +1,7 @@
 # Crontab Syntax Checker - Validate crontab entries
 
+[![Join the chat at https://gitter.im/bkr/crontab_syntax_checker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bkr/crontab_syntax_checker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Ruby gem to validate an entry that will be used in [crontab](http://www.manpagez.com/man/5/crontab/ "man 5 crontab").
 
 ## Quick start examples
